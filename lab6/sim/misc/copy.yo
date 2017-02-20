@@ -1,0 +1,70 @@
+                      | #ZengHeming 5140219405
+                      | # Execution begins at address 0 
+  0x000:              | 	.pos 0 
+  0x000:              | init:	
+  0x000: 30f400010000 |     irmovl Stack, %esp  	# Set up stack pointer  
+  0x006: 30f500010000 | 	irmovl Stack, %ebp  	# Set up base pointer   
+  0x00c: 802c000000   | 	call Main		# Execute main program
+  0x011: 00           | 	halt			# Terminate program 
+                      | 
+  0x014:              | 	.align 4 	
+                      | # Source block
+  0x014:              | src:
+  0x014: 0a000000     |     .long 0x00a
+  0x018: b0000000     |     .long 0x0b0
+  0x01c: 000c0000     |     .long 0xc00
+                      |     
+                      | # Destination block	
+  0x020:              | dest:
+  0x020: 11010000     |     .long 0x111
+  0x024: 22020000     |     .long 0x222
+  0x028: 33030000     |     .long 0x333
+                      | 
+  0x02c:              | Main:	
+  0x02c: a05f         |     pushl %ebp 
+  0x02e: 2045         | 	rrmovl %esp,%ebp
+  0x030: 30f214000000 | 	irmovl src,%edx
+  0x036: a02f         | 	pushl %edx      	# Push src
+  0x038: 30f220000000 |     irmovl dest,%edx    
+  0x03e: a02f         |     pushl %edx          # Push dest
+  0x040: 30f203000000 |     irmovl $3,%edx
+  0x046: a02f         |     pushl %edx          # Push len
+  0x048: 8052000000   | 	call Copy_block		# copy_block(src, dest, len)
+  0x04d: 2054         | 	rrmovl %ebp,%esp
+  0x04f: b05f         | 	popl %ebp
+  0x051: 90           | 	ret 
+                      | 
+                      | # int copy_block(int *src, int *dest, int len)
+  0x052:              | Copy_block:
+  0x052: a05f         | 	pushl %ebp
+  0x054: 2045         | 	rrmovl %esp,%ebp
+  0x056: 503510000000 | 	mrmovl 16(%ebp),%ebx 	# ebx = src
+  0x05c: 50150c000000 |     mrmovl 12(%ebp),%ecx    # ecx = dest
+  0x062: 502508000000 |     mrmovl 8(%ebp),%edx     # edx = len
+  0x068: 6300         | 	xorl %eax,%eax		    # result = 0
+  0x06a: 30f600000000 |     irmovl $0,%esi
+  0x070: 6162         |     subl %esi,%edx          # Set condition code
+  0x072: 71a4000000   | 	jle     End
+  0x077:              | Loop:
+  0x077: 506300000000 | 	mrmovl (%ebx),%esi	    # get *src
+  0x07d: 406100000000 |     rmmovl %esi,(%ecx)      # store in dest
+  0x083: 30f704000000 |     irmovl $4,%edi
+  0x089: 6073         |     addl %edi,%ebx          # src++
+  0x08b: 6071         |     addl %edi,%ecx          # dest++
+  0x08d: 6360         | 	xorl %esi,%eax          # calculate result
+  0x08f: 30f7ffffffff |     irmovl $-1,%edi
+  0x095: 6072         |     addl %edi,%edx          #len--   
+  0x097: 30f700000000 |     irmovl $0,%edi
+  0x09d: 6172         |     subl %edi,%edx 
+  0x09f: 7677000000   | 	jg    Loop             # Stop when 0
+  0x0a4:              | End:
+  0x0a4: 2054         | 	rrmovl %ebp,%esp
+  0x0a6: b05f         | 	popl %ebp
+  0x0a8: 90           | 	ret
+                      | /* $end sum-ys 0 */
+                      | 
+                      | # The stack starts here and grows to lower addresses
+  0x100:              | 	.pos 0x100		
+  0x100:              | Stack:	 
+                      | /* $end code-ysa */
+                      | /* $end code-yso */

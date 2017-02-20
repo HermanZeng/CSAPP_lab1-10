@@ -1,0 +1,61 @@
+                      | #ZengHeming 5140219405
+                      | # Execution begins at address 0 
+  0x000:              | 	.pos 0 
+  0x000:              | init:	
+  0x000: 30f400010000 |     irmovl Stack, %esp  	# Set up stack pointer  
+  0x006: 30f500010000 | 	irmovl Stack, %ebp  	# Set up base pointer   
+  0x00c: 802c000000   | 	call Main		# Execute main program
+  0x011: 00           | 	halt			# Terminate program 
+                      | 
+  0x014:              | 	.align 4 	
+  0x014:              | ele1:
+  0x014: 0a000000     |     .long 0x00a
+  0x018: 1c000000     |     .long ele2
+  0x01c:              | ele2:
+  0x01c: b0000000     |     .long 0x0b0
+  0x020: 24000000     |     .long ele3
+  0x024:              | ele3:
+  0x024: 000c0000     |     .long 0xc00
+  0x028: 00000000     |     .long 0	
+                      | 
+  0x02c:              | Main:	
+  0x02c: a05f         |     pushl %ebp 
+  0x02e: 2045         | 	rrmovl %esp,%ebp
+  0x030: 30f214000000 | 	irmovl ele1,%edx
+  0x036: a02f         | 	pushl %edx      	# Push ele1
+  0x038: 6300         | 	xorl %eax,%eax		# sum = 0        
+  0x03a: 6322         | 	xorl %edx,%edx	    # Set condition code
+  0x03c: 8046000000   | 	call Rsum_list		# sum_list(ls)
+  0x041: 2054         | 	rrmovl %ebp,%esp
+  0x043: b05f         | 	popl %ebp
+  0x045: 90           | 	ret 
+                      | 
+                      | # int rsum_list(list_ptr ls)
+  0x046:              | Rsum_list:
+  0x046: a05f         | 	pushl %ebp
+  0x048: 2045         | 	rrmovl %esp,%ebp
+  0x04a: 501508000000 | 	mrmovl 8(%ebp),%ecx 	# ecx = ele
+  0x050: 502104000000 |     mrmovl 4(%ecx),%edx     # set condition codes
+  0x056: 6211         | 	andl %ecx,%ecx          #         
+  0x058: 7377000000   | 	je     Set_val
+  0x05d: 506100000000 | 	mrmovl (%ecx),%esi	    # get *ele
+  0x063: a06f         |     pushl %esi
+  0x065: a02f         |     pushl %edx
+  0x067: 8046000000   |     call Rsum_list
+  0x06c: b06f         |     popl %esi
+  0x06e: b06f         |     popl %esi
+  0x070: 6060         | 	addl %esi,%eax          # add to sum
+  0x072: 7079000000   |     jmp End
+  0x077:              | Set_val:
+  0x077: 6300         |     xorl %eax,%eax          # set return value to 0
+  0x079:              | End:
+  0x079: 2054         | 	rrmovl %ebp,%esp
+  0x07b: b05f         | 	popl %ebp
+  0x07d: 90           | 	ret
+                      | /* $end sum-ys 0 */
+                      | 
+                      | # The stack starts here and grows to lower addresses
+  0x100:              | 	.pos 0x100		
+  0x100:              | Stack:	 
+                      | /* $end code-ysa */
+                      | /* $end code-yso */

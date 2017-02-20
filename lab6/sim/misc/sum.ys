@@ -1,0 +1,56 @@
+#ZengHeming 5140219405
+# Execution begins at address 0 
+	.pos 0 
+init:	
+    irmovl Stack, %esp  	# Set up stack pointer  
+	irmovl Stack, %ebp  	# Set up base pointer   
+	call Main		# Execute main program
+	halt			# Terminate program 
+
+	.align 4 	
+ele1:
+    .long 0x00a
+    .long ele2
+ele2:
+    .long 0x0b0
+    .long ele3
+ele3:
+    .long 0xc00
+    .long 0	
+
+Main:	
+    pushl %ebp 
+	rrmovl %esp,%ebp
+	irmovl ele1,%edx
+	pushl %edx      	# Push ele1
+	call Sum_list		# sum_list(ls)
+	rrmovl %ebp,%esp
+	popl %ebp
+	ret 
+
+# int sum_list(list_ptr ls)
+Sum_list:
+	pushl %ebp
+	rrmovl %esp,%ebp
+	mrmovl 8(%ebp),%ecx 	# ecx = ele1
+	xorl %eax,%eax		# sum = 0
+	andl   %edx,%edx	# Set condition codes
+	je     End
+Loop:
+	mrmovl (%ecx),%esi	    # get *ele
+	addl %esi,%eax          # add to sum
+    mrmovl 4(%ecx), %edx    # set condition code
+    mrmovl 4(%ecx), %ecx    # next node
+	andl %edx,%edx          # 
+	jne    Loop             # Stop when 0
+End:
+	rrmovl %ebp,%esp
+	popl %ebp
+	ret
+/* $end sum-ys 0 */
+
+# The stack starts here and grows to lower addresses
+	.pos 0x100		
+Stack:	 
+/* $end code-ysa */
+/* $end code-yso */

@@ -1,0 +1,70 @@
+#ZengHeming 5140219405
+# Execution begins at address 0 
+	.pos 0 
+init:	
+    irmovl Stack, %esp  	# Set up stack pointer  
+	irmovl Stack, %ebp  	# Set up base pointer   
+	call Main		# Execute main program
+	halt			# Terminate program 
+
+	.align 4 	
+# Source block
+src:
+    .long 0x00a
+    .long 0x0b0
+    .long 0xc00
+    
+# Destination block	
+dest:
+    .long 0x111
+    .long 0x222
+    .long 0x333
+
+Main:	
+    pushl %ebp 
+	rrmovl %esp,%ebp
+	irmovl src,%edx
+	pushl %edx      	# Push src
+    irmovl dest,%edx    
+    pushl %edx          # Push dest
+    irmovl $3,%edx
+    pushl %edx          # Push len
+	call Copy_block		# copy_block(src, dest, len)
+	rrmovl %ebp,%esp
+	popl %ebp
+	ret 
+
+# int copy_block(int *src, int *dest, int len)
+Copy_block:
+	pushl %ebp
+	rrmovl %esp,%ebp
+	mrmovl 16(%ebp),%ebx 	# ebx = src
+    mrmovl 12(%ebp),%ecx    # ecx = dest
+    mrmovl 8(%ebp),%edx     # edx = len
+	xorl %eax,%eax		    # result = 0
+    irmovl $0,%esi
+    subl %esi,%edx          # Set condition code
+	jle     End
+Loop:
+	mrmovl (%ebx),%esi	    # get *src
+    rmmovl %esi,(%ecx)      # store in dest
+    irmovl $4,%edi
+    addl %edi,%ebx          # src++
+    addl %edi,%ecx          # dest++
+	xorl %esi,%eax          # calculate result
+    irmovl $-1,%edi
+    addl %edi,%edx          #len--   
+    irmovl $0,%edi
+    subl %edi,%edx 
+	jg    Loop             # Stop when 0
+End:
+	rrmovl %ebp,%esp
+	popl %ebp
+	ret
+/* $end sum-ys 0 */
+
+# The stack starts here and grows to lower addresses
+	.pos 0x100		
+Stack:	 
+/* $end code-ysa */
+/* $end code-yso */

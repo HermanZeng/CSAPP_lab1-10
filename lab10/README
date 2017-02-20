@@ -1,0 +1,24 @@
+****************
+CS:APP Proxy Lab
+****************
+
+# section 1: Files which you are free to modify
+Makefile	- For building proxy
+
+# proxy source files
+proxy.c	- Primary proxy code
+(you may add other source files which proxy.c depends on)
+
+# end of section 1
+
+# section 2: Files which you should NOT modify
+csapp.{c,h}	- Wrapper and helper functions from the CS:APP text
+README		- This file
+
+# grading
+grade.sh - Grade your implementation
+non-server.py - Used by grade.sh to block a TCP connection
+tiny/ - Files to be fetched in the grading process
+cache/	- holding the cached data in execution
+
+# end of section 2
